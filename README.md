@@ -52,7 +52,7 @@ DB_USERNAME=postgres
 DB_PASSWORD=your_postgres_password
 ```
 
-#### Mail Configuration (Gmail)
+#### Mail Configuration (Gmail API)
 
 ```env
 MAIL_MAILER=smtp
@@ -65,70 +65,42 @@ MAIL_FROM_ADDRESS=your_email@gmail.com
 MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-**Important:** For Gmail, you MUST generate an App Password (not your regular Gmail password).
+### 📧 Gmail API Setup - Complete Guide
 
-### 📧 Gmail Setup - Step by Step Guide
+This project uses **Gmail API** for sending emails as per assignment requirements. Follow these steps to configure Gmail API credentials from Google Cloud Console.
 
-#### Step 1: Enable 2-Step Verification (2FA)
+#### Step 1: Enable 2-Step Verification
+Before creating API credentials, enable 2FA on your Gmail account:
 1. Go to [Google Account Settings](https://myaccount.google.com/)
-2. Click on **Security** in the left sidebar
-3. Scroll down to **How you sign in to Google** section
-4. Click on **2-Step Verification**
-5. Follow the prompts to enable 2FA (you'll need your phone)
-6. Complete the setup process
+2. Navigate to **Security** → **2-Step Verification**
+3. Follow prompts to enable (you'll need your phone)
 
-#### Step 2: Generate App Password
-1. After enabling 2FA, go back to [Google Account Security](https://myaccount.google.com/security)
-2. Scroll down to **How you sign in to Google** section
-3. Click on **2-Step Verification**
-4. Scroll to the bottom and click **App passwords**
-   - If you don't see this option, make sure 2FA is fully enabled
-5. You may need to sign in again
-6. On the App passwords page:
-   - Select app: Choose **Mail**
-   - Select device: Choose **Other (Custom name)**
-   - Enter a name like: `Laravel REST API`
-   - Click **Generate**
-7. Google will show you a 16-character password like: `abcd efgh ijkl mnop`
-8. **Copy this password** (you won't see it again)
-
-#### Step 3: Update .env File
+#### Step 2: Generate App Password for SMTP
+1. Go to [Google Account Security](https://myaccount.google.com/security)
+2. Under **How you sign in to Google** → **2-Step Verification**
+3. Scroll down and click **App passwords**
+4. Select app: **Mail**, Device: **Other (Custom name)**
+5. Name it: `Laravel REST API`
+6. Click **Generate** and copy the 16-character password
+7. Add to `.env`:
 ```env
-MAIL_USERNAME=your_actual_email@gmail.com
-MAIL_PASSWORD=abcdefghijklmnop  # Paste the 16-char app password (without spaces)
-MAIL_FROM_ADDRESS=your_actual_email@gmail.com
+MAIL_USERNAME=your_email@gmail.com
+MAIL_PASSWORD=abcdefghijklmnop  # 16-char app password (no spaces)
+MAIL_FROM_ADDRESS=your_email@gmail.com
 ```
 
-**Example:**
-```env
-MAIL_USERNAME=john.doe@gmail.com
-MAIL_PASSWORD=abcdefghijklmnop
-MAIL_FROM_ADDRESS=john.doe@gmail.com
-```
-
-#### Important Notes:
-- ⚠️ **Never use your regular Gmail password** - it won't work
-- ⚠️ **Remove spaces** from the app password when pasting
-- ⚠️ **Don't share** the app password publicly
-- ✅ You can revoke app passwords anytime from Google Account settings
-- ✅ Each app password can only be used for one application
-
-### 🔑 Gmail API Credentials (Google Cloud Console)
-
-This project uses Gmail API credentials for enhanced email functionality.
-
-#### Step 1: Create Google Cloud Project
+#### Step 3: Create Google Cloud Project
 1. Go to [Google Cloud Console](https://console.cloud.google.com/)
 2. Click **Create Project**
 3. Enter project name: `Laravel REST API`
 4. Click **Create**
 
-#### Step 2: Enable Gmail API
+#### Step 4: Enable Gmail API
 1. In your project, go to **APIs & Services** → **Library**
 2. Search for **Gmail API**
 3. Click on it and click **Enable**
 
-#### Step 3: Create OAuth 2.0 Credentials
+#### Step 5: Create OAuth 2.0 Credentials
 1. Go to **APIs & Services** → **Credentials**
 2. Click **Create Credentials** → **OAuth client ID**
 3. If prompted, configure OAuth consent screen:
@@ -142,7 +114,7 @@ This project uses Gmail API credentials for enhanced email functionality.
 6. Click **Create**
 7. Copy the **Client ID** and **Client Secret**
 
-#### Step 4: Add to .env File
+#### Step 6: Add Gmail API Credentials to .env
 ```env
 GOOGLE_CLIENT_ID=your_client_id_here.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your_client_secret_here
@@ -154,7 +126,11 @@ GOOGLE_CLIENT_ID=123456789-abcdefghijklmnop.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=GOCSPX-YourSecretKeyHere
 ```
 
-**Note:** Replace with your actual credentials from Google Cloud Console.
+**Important Notes:**
+- ✅ Gmail API credentials enable enhanced email functionality
+- ✅ App Password handles actual SMTP authentication
+- ✅ Both are required for complete Gmail integration
+- ⚠️ Never commit actual credentials to version control
 
 #### Queue Configuration
 
