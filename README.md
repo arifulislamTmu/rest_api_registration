@@ -65,12 +65,53 @@ MAIL_FROM_ADDRESS=your_email@gmail.com
 MAIL_FROM_NAME="${APP_NAME}"
 ```
 
-**Important:** For Gmail, you need to generate an App Password:
-1. Go to your Google Account settings
-2. Enable 2-Step Verification
-3. Go to Security → 2-Step Verification → App passwords
-4. Generate a new app password for "Mail"
-5. Use this password in `MAIL_PASSWORD`
+**Important:** For Gmail, you MUST generate an App Password (not your regular Gmail password).
+
+### 📧 Gmail Setup - Step by Step Guide
+
+#### Step 1: Enable 2-Step Verification (2FA)
+1. Go to [Google Account Settings](https://myaccount.google.com/)
+2. Click on **Security** in the left sidebar
+3. Scroll down to **How you sign in to Google** section
+4. Click on **2-Step Verification**
+5. Follow the prompts to enable 2FA (you'll need your phone)
+6. Complete the setup process
+
+#### Step 2: Generate App Password
+1. After enabling 2FA, go back to [Google Account Security](https://myaccount.google.com/security)
+2. Scroll down to **How you sign in to Google** section
+3. Click on **2-Step Verification**
+4. Scroll to the bottom and click **App passwords**
+   - If you don't see this option, make sure 2FA is fully enabled
+5. You may need to sign in again
+6. On the App passwords page:
+   - Select app: Choose **Mail**
+   - Select device: Choose **Other (Custom name)**
+   - Enter a name like: `Laravel REST API`
+   - Click **Generate**
+7. Google will show you a 16-character password like: `abcd efgh ijkl mnop`
+8. **Copy this password** (you won't see it again)
+
+#### Step 3: Update .env File
+```env
+MAIL_USERNAME=your_actual_email@gmail.com
+MAIL_PASSWORD=abcdefghijklmnop  # Paste the 16-char app password (without spaces)
+MAIL_FROM_ADDRESS=your_actual_email@gmail.com
+```
+
+**Example:**
+```env
+MAIL_USERNAME=john.doe@gmail.com
+MAIL_PASSWORD=abcdefghijklmnop
+MAIL_FROM_ADDRESS=john.doe@gmail.com
+```
+
+#### Important Notes:
+- ⚠️ **Never use your regular Gmail password** - it won't work
+- ⚠️ **Remove spaces** from the app password when pasting
+- ⚠️ **Don't share** the app password publicly
+- ✅ You can revoke app passwords anytime from Google Account settings
+- ✅ Each app password can only be used for one application
 
 #### Queue Configuration
 
@@ -78,18 +119,56 @@ MAIL_FROM_NAME="${APP_NAME}"
 QUEUE_CONNECTION=database
 ```
 
-### 4. Create PostgreSQL Database
+### 4. Setup PostgreSQL Database
 
+#### Option A: Using pgAdmin (GUI - Recommended for Beginners)
+1. Open **pgAdmin** (comes with PostgreSQL installation)
+2. Connect to your PostgreSQL server
+3. Right-click on **Databases** → **Create** → **Database**
+4. Enter database name: `rest_api_db`
+5. Click **Save**
+
+#### Option B: Using Command Line (psql)
 ```bash
-# Connect to PostgreSQL
+# Windows (if PostgreSQL is in PATH)
 psql -U postgres
 
-# Create the database
+# Or specify full path
+"C:\Program Files\PostgreSQL\16\bin\psql.exe" -U postgres
+
+# Inside psql, create database
 CREATE DATABASE rest_api_db;
 
 # Exit
 \q
 ```
+
+#### Option C: Using Laragon (if PostgreSQL module installed)
+1. Open Laragon
+2. Click **Database** → **PostgreSQL**
+3. Create new database named `rest_api_db`
+
+#### Enable PostgreSQL Extension in PHP
+If you get "could not find driver" error:
+
+**For Laragon users:**
+1. Laragon → Menu → PHP → php.ini
+2. Find these lines and remove the semicolon (;):
+   ```ini
+   ;extension=pdo_pgsql
+   ;extension=pgsql
+   ```
+   Change to:
+   ```ini
+   extension=pdo_pgsql
+   extension=pgsql
+   ```
+3. Save and restart Laragon
+
+**For XAMPP/Other:**
+1. Open `php.ini` file
+2. Enable the same extensions as above
+3. Restart Apache/Web server
 
 ### 5. Run Migrations
 
@@ -353,13 +432,7 @@ php artisan queue:work --daemon
 php artisan queue:listen
 ```
 
-## Security Notes
 
-- Never commit `.env` file to version control
-- Use App Passwords for Gmail, not your actual password
-- Enable 2-Factor Authentication on your Gmail account
-- In production, use a proper queue driver like Redis or SQS
-- Always validate and sanitize user input
 
 ## License
 
