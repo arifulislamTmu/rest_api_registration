@@ -8,7 +8,7 @@ A Laravel REST API that handles user registration and sends welcome emails async
 - ✅ User registration endpoint (`POST /api/register`)
 - ✅ Asynchronous email sending using queues (non-blocking)
 - ✅ Gmail SMTP integration for sending emails
-- ✅ MySQL database
+- ✅ PostgreSQL database
 - ✅ Comprehensive error handling and validation
 - ✅ Well-commented code
 - ✅ **Automated testing with PHPUnit (12 test cases)**
@@ -17,7 +17,7 @@ A Laravel REST API that handles user registration and sends welcome emails async
 
 - PHP >= 8.1
 - Composer
-- MySQL
+- PostgreSQL
 - Laravel 10.x
 - Gmail account with App Password enabled
 - PHPUnit (included with Laravel)
@@ -41,15 +41,15 @@ composer install
 
 Copy the `.env` file and update the following configurations:
 
-#### Database Configuration (MySQL)
+#### Database Configuration (PostgreSQL)
 
 ```env
-DB_CONNECTION=mysql
+DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
-DB_PORT=3306
+DB_PORT=5432
 DB_DATABASE=rest_api_db
-DB_USERNAME=root
-DB_PASSWORD=
+DB_USERNAME=postgres
+DB_PASSWORD=your_postgres_password
 ```
 
 #### Mail Configuration (Gmail)
@@ -304,7 +304,7 @@ tests/
 
 1. **User sends registration request** → API receives POST data
 2. **Validation** → Checks if email is unique and password is confirmed
-3. **User creation** → Creates user record in MySQL database
+3. **User creation** → Creates user record in PostgreSQL database
 4. **Queue notification** → Dispatches email job to queue (non-blocking)
 5. **Immediate response** → Returns success response to user
 6. **Background email** → Queue worker picks up job and sends email via Gmail

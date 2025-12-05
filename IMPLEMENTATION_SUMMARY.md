@@ -14,7 +14,7 @@
 
 ### ✅ Framework & Database
 - **Framework:** Laravel 10.x
-- **Database:** MySQL configured and ready
+- **Database:** PostgreSQL configured and ready
 
 ### ✅ Asynchronous Email Sending
 - **Implementation:** Queue-based system (database driver)
@@ -71,7 +71,7 @@ tests/Feature/RegistrationTest.php
 ```
 .env
 ```
-- MySQL database configuration
+- PostgreSQL database configuration
 - Gmail SMTP settings
 - Queue connection set to 'database'
 
