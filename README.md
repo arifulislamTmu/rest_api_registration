@@ -113,6 +113,49 @@ MAIL_FROM_ADDRESS=john.doe@gmail.com
 - ✅ You can revoke app passwords anytime from Google Account settings
 - ✅ Each app password can only be used for one application
 
+### 🔑 Gmail API Credentials (Google Cloud Console)
+
+This project uses Gmail API credentials for enhanced email functionality.
+
+#### Step 1: Create Google Cloud Project
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Click **Create Project**
+3. Enter project name: `Laravel REST API`
+4. Click **Create**
+
+#### Step 2: Enable Gmail API
+1. In your project, go to **APIs & Services** → **Library**
+2. Search for **Gmail API**
+3. Click on it and click **Enable**
+
+#### Step 3: Create OAuth 2.0 Credentials
+1. Go to **APIs & Services** → **Credentials**
+2. Click **Create Credentials** → **OAuth client ID**
+3. If prompted, configure OAuth consent screen:
+   - User Type: **External**
+   - App name: `Laravel REST API`
+   - User support email: Your email
+   - Developer contact: Your email
+   - Click **Save and Continue**
+4. Application type: **Web application**
+5. Name: `Laravel App`
+6. Click **Create**
+7. Copy the **Client ID** and **Client Secret**
+
+#### Step 4: Add to .env File
+```env
+GOOGLE_CLIENT_ID=your_client_id_here.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=your_client_secret_here
+```
+
+**Example:**
+```env
+GOOGLE_CLIENT_ID=123456789-abcdefghijklmnop.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-YourSecretKeyHere
+```
+
+**Note:** Replace with your actual credentials from Google Cloud Console.
+
 #### Queue Configuration
 
 ```env
