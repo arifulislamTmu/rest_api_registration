@@ -376,25 +376,38 @@ app/
 ├── Http/
 │   └── Controllers/
 │       └── Api/
-│           └── RegisterController.php    # Handles user registration
+│           ├── RegisterController.php       # Handles user registration
+│           └── GmailAuthController.php      # OAuth2 authorization flow
 ├── Models/
-│   └── User.php                          # User model
+│   └── User.php                             # User model with Notifiable trait
 ├── Notifications/
-│   ├── WelcomeEmailNotification.php      # Welcome email notification
-│   └── GmailApiChannel.php               # Custom Gmail API notification channel
+│   ├── WelcomeEmailNotification.php         # Welcome email notification (uses Gmail API)
+│   └── GmailApiChannel.php                  # Custom Gmail API notification channel
 └── Services/
-    └── GmailApiService.php               # Gmail API OAuth2 service
+    └── GmailApiService.php                  # Gmail API OAuth2 service (email sending)
 
 routes/
-└── api.php                               # API routes definition (includes OAuth2 routes)
+├── api.php                                  # API routes (register, OAuth2 auth/callback)
+└── web.php                                  # Web routes
+
+config/
+├── services.php                             # Google OAuth2 configuration
+└── queue.php                                # Queue driver configuration
 
 database/
-└── migrations/
-    └── *_create_users_table.php          # User table migration
+├── migrations/
+│   ├── *_create_users_table.php             # User table schema
+│   ├── *_create_jobs_table.php              # Queue jobs table
+│   └── *_create_failed_jobs_table.php       # Failed jobs tracking
+└── seeders/
+    └── DatabaseSeeder.php                   # Database seeding
 
 tests/
 └── Feature/
-    └── RegistrationTest.php              # Automated test suite (12 tests)
+    └── RegistrationTest.php                 # Automated test suite (12 tests)
+
+.env                                         # Environment variables (Gmail API credentials)
+composer.json                                # PHP dependencies (includes google/apiclient)
 ```
 
 ## How It Works
