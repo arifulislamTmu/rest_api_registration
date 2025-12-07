@@ -1,70 +1,97 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  # Laravel Application
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    container_name: laravel_rest_api
-    restart: unless-stopped
-    working_dir: /var/www/html
-    ports:
-      - "8000:8000"
-    environment:
-      - APP_NAME=Laravel
-      - APP_ENV=production
-      - APP_KEY=${APP_KEY}
-      - APP_DEBUG=false
-      - APP_URL=http://localhost:8000
+    # PHP Service
+    rest_api:
+        build:
+            args:
+                user: Polash
+                uid: 1000
+            context: .
+            dockerfile: .docker/Dockerfile
+        image: rest_api
+        container_name: rest_api
+        restart: unless-stopped
+        working_dir: /var/www/
+        tty: true
+        environment:
+            SERVICE_NAME: app
+            SERVICE_TAGS: dev
+        volumes:
+            - ./:/var/www
+            - ./.docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        networks:
+            - rest_api_network
 
-      - DB_CONNECTION=pgsql
-      - DB_HOST=postgres
-      - DB_PORT=5432
-      - DB_DATABASE=rest_api_db
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=postgres
+    # MySQL Service
+    rest_api_db:
+        image: mysql:8.0
+        container_name: rest_api_db
+        restart: unless-stopped
+        ports:
+            - "${DOCKER_DB_PORT}:3306"
+        environment:
+            MYSQL_DATABASE: ${DB_DATABASE}
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            MYSQL_PASSWORD: ${DB_PASSWORD}
+            MYSQL_USER: ${DB_USERNAME}
+            SERVICE_TAGS: dev
+            SERVICE_NAME: mysql
+        volumes:
+            - rest_api_mysql_data:/var/lib/mysql
+        networks:
+            - rest_api_network
 
-      - QUEUE_CONNECTION=database
+    # Nginx Service
+    rest_api_nginx:
+        image: nginx:alpine
+        container_name: rest_api_nginx
+        restart: unless-stopped
+        tty: true
+        ports:
+            - "${DOCKER_APP_PORT}:80"
+            - "${DOCKER_APP_SSL_PORT}:443"
+        volumes:
+            - ./:/var/www
+            - ./.docker/nginx/conf.d/:/etc/nginx/conf.d/
+        networks:
+            - rest_api_network
 
-      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
-      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      - GOOGLE_REDIRECT_URI=${GOOGLE_REDIRECT_URI:-http://localhost:8000/api/gmail/callback}
-      - GOOGLE_REFRESH_TOKEN=${GOOGLE_REFRESH_TOKEN}
-    volumes:
-      - ./storage:/var/www/html/storage
-      - ./bootstrap/cache:/var/www/html/bootstrap/cache
-    networks:
-      - laravel_network
-    depends_on:
-      postgres:
-        condition: service_healthy
+    # phpMyAdmin Service
+    rest_api_phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        restart: unless-stopped
+        container_name: rest_api_phpmyadmin
+        depends_on:
+            - rest_api_db
+        ports:
+            - "${DOCKER_PHPMYADMIN_PORT}:80"
+        environment:
+            PMA_HOST: rest_api_db
+            MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+            UPLOAD_LIMIT: 50M
+        networks:
+            - rest_api_network
 
-  # PostgreSQL Database
-  postgres:
-    image: postgres:15-alpine
-    container_name: postgres_db
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=rest_api_db
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - laravel_network
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
+    # Redis Cache Service
+    rest_api_redis_cache:
+        image: redis:alpine
+        restart: always
+        container_name: rest_api_redis_cache
+        ports:
+            - "${DOCKER_REDIS_PORT}:6379"
+        command: redis-server --save 20 1 --loglevel warning --requirepass ${REDIS_PASSWORD}
+        volumes:
+            - rest_api_cache:/data
+        networks:
+            - rest_api_network
 
+# Docker Networks
 networks:
-  laravel_network:
-    driver: bridge
+    rest_api_network:
+        driver: bridge
 
+# Volumes
 volumes:
-  postgres_data:
-    driver: local
+    rest_api_mysql_data:
+    rest_api_cache:

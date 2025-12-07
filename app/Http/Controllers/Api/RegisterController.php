@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use App\Notifications\WelcomeEmailNotification;
 use Illuminate\Http\Request;
@@ -22,30 +23,15 @@ class RegisterController extends Controller
      * @param Request $request - The HTTP request containing user registration data
      * @return \Illuminate\Http\JsonResponse
      */
-    public function register(Request $request)
+    public function register(StoreUserRequest $request)
     {
         try {
-            // Validate the incoming request data
-            $validator = Validator::make($request->all(), [
-                'name' => 'required|string|max:255',
-                'email' => 'required|string|email|max:255|unique:users',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
-
-            // If validation fails, return error response
-            if ($validator->fails()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Validation failed',
-                    'errors' => $validator->errors()
-                ], 422);
-            }
-
-            // Create a new user in the database
+            
+            $data = $request->validated();
             $user = User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'name' => $data['name'],
+                'email' => $data['email'],
+                'password' => Hash::make($data['password']),
             ]);
 
             // Dispatch the welcome email notification to the queue
@@ -65,7 +51,6 @@ class RegisterController extends Controller
                     ]
                 ]
             ], 201);
-
         } catch (\Exception $e) {
             // Handle any unexpected errors
             return response()->json([

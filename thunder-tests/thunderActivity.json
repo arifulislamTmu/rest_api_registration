@@ -1,0 +1,26 @@
+[
+  {
+    "_id": "022e780b-d97e-414d-8bf6-02244b301d4d",
+    "colId": "history",
+    "containerId": "",
+    "name": "http://localhost:5383/",
+    "url": "http://localhost:5383/api/register",
+    "method": "POST",
+    "sortNum": 0,
+    "created": "2025-12-07T06:56:45.668Z",
+    "modified": "2025-12-07T07:13:11.447Z",
+    "headers": [
+      {
+        "name": "Accept",
+        "value": "application/json "
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n  \"name\": \"abcd\",\n  \"email\": \"johans@example.com\",\n  \"password\": \"password123\",\n  \"password_confirmation\": \"password123\"\n}",
+      "form": []
+    },
+    "tests": []
+  }
+]
