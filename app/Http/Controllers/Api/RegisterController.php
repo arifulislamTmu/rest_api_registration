@@ -26,7 +26,7 @@ class RegisterController extends Controller
     public function register(StoreUserRequest $request)
     {
         try {
-            
+
             $data = $request->validated();
             $user = User::create([
                 'name' => $data['name'],
@@ -52,7 +52,6 @@ class RegisterController extends Controller
                 ]
             ], 201);
         } catch (\Exception $e) {
-            // Handle any unexpected errors
             return response()->json([
                 'success' => false,
                 'message' => 'Registration failed',
